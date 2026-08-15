@@ -23,22 +23,31 @@ function AppleGame() {
   const [oddIndex, setOddIndex] = useState(0);
   const [row, setRow] = useState<string[] | null>(null);
   const [busy, setBusy] = useState(false);
+  const [matrix, setMatrix] = useState<AppleMatrix | null>(null);
+  const [started, setStarted] = useState(false);
 
   const start = async () => {
     setBusy(true);
     try {
-      const vip = isVipAppleCode(readSession()?.code);
-      let matrix: AppleMatrix;
-      if (vip) {
-        try {
-          matrix = await fetchAppleMatrix();
-        } catch {
-          matrix = randomMatrix();
+      let current = matrix;
+      if (!current) {
+        const vip = isVipAppleCode(readSession()?.code);
+        if (vip) {
+          try {
+            current = await fetchAppleMatrix();
+          } catch {
+            current = randomMatrix();
+          }
+        } else {
+          current = randomMatrix();
         }
-      } else {
-        matrix = randomMatrix();
+        setMatrix(current);
       }
-      setRow(matrix[oddIndex] ?? null);
+
+      const nextIndex = started ? Math.min(oddIndex + 1, ODDS.length - 1) : oddIndex;
+      setStarted(true);
+      setOddIndex(nextIndex);
+      setRow(current[nextIndex] ?? null);
     } finally {
       setBusy(false);
     }
@@ -46,6 +55,8 @@ function AppleGame() {
   const reset = async () => {
     setRow(null);
     setOddIndex(0);
+    setMatrix(null);
+    setStarted(false);
     if (!isVipAppleCode(readSession()?.code)) return;
     setBusy(true);
     try {
@@ -56,6 +67,7 @@ function AppleGame() {
       setBusy(false);
     }
   };
+
 
 
 
@@ -97,7 +109,10 @@ function AppleGame() {
                 return (
                   <button
                     key={o}
-                    onClick={() => setOddIndex(i)}
+                    onClick={() => {
+                      setOddIndex(i);
+                      if (started && matrix) setRow(matrix[i] ?? null);
+                    }}
                     style={{ width: 88 }}
                     className={`h-11 shrink-0 cursor-pointer rounded-xl border font-display text-xs font-black transition-all duration-300 ${
                       active
