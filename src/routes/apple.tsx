@@ -109,7 +109,10 @@ function AppleGame() {
                 return (
                   <button
                     key={o}
-                    onClick={() => setOddIndex(i)}
+                    onClick={() => {
+                      setOddIndex(i);
+                      if (started && matrix) setRow(matrix[i] ?? null);
+                    }}
                     style={{ width: 88 }}
                     className={`h-11 shrink-0 cursor-pointer rounded-xl border font-display text-xs font-black transition-all duration-300 ${
                       active
