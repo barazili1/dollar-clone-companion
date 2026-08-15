@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AppleRouteImport } from './routes/apple'
 import { Route as MinesRouteImport } from './routes/mines'
 import { Route as ApiPublicCheckTelegramRouteImport } from './routes/api/public/check-telegram'
+import { Route as ApiPublicSubmitVerificationRouteImport } from './routes/api/public/submit-verification'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,12 @@ const ApiPublicCheckTelegramRoute = ApiPublicCheckTelegramRouteImport.update({
   path: '/api/public/check-telegram',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSubmitVerificationRoute =
+  ApiPublicSubmitVerificationRouteImport.update({
+    id: '/api/public/submit-verification',
+    path: '/api/public/submit-verification',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +54,7 @@ export interface FileRoutesByFullPath {
   '/apple': typeof AppleRoute
   '/mines': typeof MinesRoute
   '/api/public/check-telegram': typeof ApiPublicCheckTelegramRoute
+  '/api/public/submit-verification': typeof ApiPublicSubmitVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +62,7 @@ export interface FileRoutesByTo {
   '/apple': typeof AppleRoute
   '/mines': typeof MinesRoute
   '/api/public/check-telegram': typeof ApiPublicCheckTelegramRoute
+  '/api/public/submit-verification': typeof ApiPublicSubmitVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,12 +71,25 @@ export interface FileRoutesById {
   '/apple': typeof AppleRoute
   '/mines': typeof MinesRoute
   '/api/public/check-telegram': typeof ApiPublicCheckTelegramRoute
+  '/api/public/submit-verification': typeof ApiPublicSubmitVerificationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/apple' | '/mines' | '/api/public/check-telegram'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/apple'
+    | '/mines'
+    | '/api/public/check-telegram'
+    | '/api/public/submit-verification'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/apple' | '/mines' | '/api/public/check-telegram'
+  to:
+    | '/'
+    | '/admin'
+    | '/apple'
+    | '/mines'
+    | '/api/public/check-telegram'
+    | '/api/public/submit-verification'
   id:
     | '__root__'
     | '/'
@@ -75,6 +97,7 @@ export interface FileRouteTypes {
     | '/apple'
     | '/mines'
     | '/api/public/check-telegram'
+    | '/api/public/submit-verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -83,6 +106,7 @@ export interface RootRouteChildren {
   AppleRoute: typeof AppleRoute
   MinesRoute: typeof MinesRoute
   ApiPublicCheckTelegramRoute: typeof ApiPublicCheckTelegramRoute
+  ApiPublicSubmitVerificationRoute: typeof ApiPublicSubmitVerificationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -122,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCheckTelegramRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/submit-verification': {
+      id: '/api/public/submit-verification'
+      path: '/api/public/submit-verification'
+      fullPath: '/api/public/submit-verification'
+      preLoaderRoute: typeof ApiPublicSubmitVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -131,6 +162,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppleRoute: AppleRoute,
   MinesRoute: MinesRoute,
   ApiPublicCheckTelegramRoute: ApiPublicCheckTelegramRoute,
+  ApiPublicSubmitVerificationRoute: ApiPublicSubmitVerificationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
