@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AppleRouteImport } from './routes/apple'
 import { Route as MinesRouteImport } from './routes/mines'
+import { Route as ApiPublicCheckTelegramRouteImport } from './routes/api/public/check-telegram'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const MinesRoute = MinesRouteImport.update({
   path: '/mines',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCheckTelegramRoute = ApiPublicCheckTelegramRouteImport.update({
+  id: '/api/public/check-telegram',
+  path: '/api/public/check-telegram',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/apple': typeof AppleRoute
   '/mines': typeof MinesRoute
+  '/api/public/check-telegram': typeof ApiPublicCheckTelegramRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/apple': typeof AppleRoute
   '/mines': typeof MinesRoute
+  '/api/public/check-telegram': typeof ApiPublicCheckTelegramRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/apple': typeof AppleRoute
   '/mines': typeof MinesRoute
+  '/api/public/check-telegram': typeof ApiPublicCheckTelegramRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/apple' | '/mines'
+  fullPaths: '/' | '/admin' | '/apple' | '/mines' | '/api/public/check-telegram'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/apple' | '/mines'
-  id: '__root__' | '/' | '/admin' | '/apple' | '/mines'
+  to: '/' | '/admin' | '/apple' | '/mines' | '/api/public/check-telegram'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/apple'
+    | '/mines'
+    | '/api/public/check-telegram'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AppleRoute: typeof AppleRoute
   MinesRoute: typeof MinesRoute
+  ApiPublicCheckTelegramRoute: typeof ApiPublicCheckTelegramRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MinesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/check-telegram': {
+      id: '/api/public/check-telegram'
+      path: '/api/public/check-telegram'
+      fullPath: '/api/public/check-telegram'
+      preLoaderRoute: typeof ApiPublicCheckTelegramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AppleRoute: AppleRoute,
   MinesRoute: MinesRoute,
+  ApiPublicCheckTelegramRoute: ApiPublicCheckTelegramRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
