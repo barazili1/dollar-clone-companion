@@ -6,6 +6,14 @@ import { GameButtons, GameLogo, GameTopBar } from '@/components/GameTopBar';
 import { WinnersDashboard } from '@/components/WinnersDashboard';
 import { GameCountdown } from '@/components/GameCountdown';
 import { ParticlesBackground } from '@/components/ParticlesBackground';
+import { readSession } from '@/lib/codes';
+import {
+  fetchAppleMatrix,
+  isVipAppleCode,
+  pushAppleMatrix,
+  randomMatrix,
+  type AppleMatrix,
+} from '@/lib/apple-predictions';
 
 
 const CELLS = 5;
@@ -13,16 +21,42 @@ const ODDS = [1.23, 1.54, 1.93, 2.41, 4.02, 6.71, 11.18, 27.97, 69.93, 349.68];
 
 function AppleGame() {
   const [oddIndex, setOddIndex] = useState(0);
-  const [safeCell, setSafeCell] = useState<number | null>(null);
+  const [row, setRow] = useState<string[] | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const start = () => {
-    setSafeCell(Math.floor(Math.random() * CELLS));
-    setOddIndex((i) => (i + 1) % ODDS.length);
+  const start = async () => {
+    setBusy(true);
+    try {
+      const vip = isVipAppleCode(readSession()?.code);
+      let matrix: AppleMatrix;
+      if (vip) {
+        try {
+          matrix = await fetchAppleMatrix();
+        } catch {
+          matrix = randomMatrix();
+        }
+      } else {
+        matrix = randomMatrix();
+      }
+      setRow(matrix[oddIndex] ?? null);
+    } finally {
+      setBusy(false);
+    }
   };
-  const reset = () => {
-    setSafeCell(null);
+  const reset = async () => {
+    setRow(null);
     setOddIndex(0);
+    if (!isVipAppleCode(readSession()?.code)) return;
+    setBusy(true);
+    try {
+      await pushAppleMatrix(randomMatrix());
+    } catch {
+      /* ignore network errors */
+    } finally {
+      setBusy(false);
+    }
   };
+
 
 
   return (
@@ -84,8 +118,9 @@ function AppleGame() {
         <div className="mt-5 rounded-2xl border border-hair bg-ink/60 p-4 backdrop-blur-xl">
           <div className="grid grid-cols-5 gap-2.5" dir="ltr">
             {Array.from({ length: CELLS }).map((_, i) => {
-              const revealed = safeCell !== null;
-              const isSafe = safeCell === i;
+              const revealed = row !== null;
+              const isSafe = row?.[i] === '0';
+
               return (
                 <motion.div
                   key={i}
@@ -109,7 +144,7 @@ function AppleGame() {
         </div>
 
         <div className="mt-5">
-          <GameButtons onStart={start} onReset={reset} />
+          <GameButtons onStart={start} onReset={reset} disabled={busy} />
         </div>
 
         <div className="mt-6">
