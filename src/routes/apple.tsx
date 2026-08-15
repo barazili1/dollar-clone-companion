@@ -144,7 +144,7 @@ function AppleGame() {
         </div>
 
         <div className="mt-5">
-          <GameButtons onStart={start} onReset={reset} />
+          <GameButtons onStart={start} onReset={reset} disabled={busy} />
         </div>
 
         <div className="mt-6">
