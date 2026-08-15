@@ -118,8 +118,9 @@ function AppleGame() {
         <div className="mt-5 rounded-2xl border border-hair bg-ink/60 p-4 backdrop-blur-xl">
           <div className="grid grid-cols-5 gap-2.5" dir="ltr">
             {Array.from({ length: CELLS }).map((_, i) => {
-              const revealed = safeCell !== null;
-              const isSafe = safeCell === i;
+              const revealed = row !== null;
+              const isSafe = row?.[i] === '0';
+
               return (
                 <motion.div
                   key={i}
